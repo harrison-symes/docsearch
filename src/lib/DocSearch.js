@@ -59,6 +59,8 @@ class DocSearch {
       handleSelected,
       enhancedSearchInput,
       layout,
+      dataCallback,
+
     });
 
     this.apiKey = apiKey;
@@ -80,6 +82,7 @@ class DocSearch {
 
     // eslint-disable-next-line no-param-reassign
     handleSelected = handleSelected || this.handleSelected;
+    this.dataCallback = this.dataCallback || null;
 
     this.isSimpleLayout = layout === 'simple';
 
@@ -216,6 +219,7 @@ class DocSearch {
           },
         ])
         .then(data => {
+          this.dataCallback(data)
           let hits = data.results[0].hits;
           if (transformData) {
             hits = transformData(hits) || hits;
