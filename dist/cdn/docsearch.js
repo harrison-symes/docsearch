@@ -2815,9 +2815,10 @@ var DocSearch = function () {
         _this.client.search([{
           indexName: _this.indexName,
           query: query,
-          hitsPerPage: 5,
-          clickAnalytics: true,
-          params: _this.algoliaOptions
+          params: _extends({}, _this.algoliaOptions, {
+            hitsPerPage: 5,
+            clickAnalytics: true
+          })
         }]).then(function (data) {
           _this.dataCallback(data);
           var hits = data.results[0].hits;

@@ -216,9 +216,11 @@ class DocSearch {
           {
             indexName: this.indexName,
             query,
-            hitsPerPage: 5,
-            clickAnalytics: true,
-            params: this.algoliaOptions,
+            params: {
+              ...this.algoliaOptions,
+              hitsPerPage: 5,
+              clickAnalytics: true,
+            },
           },
         ])
         .then(data => {
