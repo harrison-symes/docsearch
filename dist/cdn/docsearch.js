@@ -2743,7 +2743,7 @@ var DocSearch = function () {
 
     // eslint-disable-next-line no-param-reassign
     handleSelected = handleSelected || this.handleSelected;
-    this.dataCallback = this.dataCallback || null;
+    this.dataCallback = dataCallback || null;
 
     this.isSimpleLayout = layout === 'simple';
 
