@@ -2707,7 +2707,9 @@ var DocSearch = function () {
         _ref$enhancedSearchIn = _ref.enhancedSearchInput,
         enhancedSearchInput = _ref$enhancedSearchIn === undefined ? false : _ref$enhancedSearchIn,
         _ref$layout = _ref.layout,
-        layout = _ref$layout === undefined ? 'collumns' : _ref$layout;
+        layout = _ref$layout === undefined ? 'collumns' : _ref$layout,
+        _ref$dataCallback = _ref.dataCallback,
+        dataCallback = _ref$dataCallback === undefined ? function () {} : _ref$dataCallback;
 
     _classCallCheck(this, DocSearch);
 

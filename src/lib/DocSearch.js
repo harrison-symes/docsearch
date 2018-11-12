@@ -46,6 +46,7 @@ class DocSearch {
     handleSelected = false,
     enhancedSearchInput = false,
     layout = 'collumns',
+    dataCallback = () => {},
   }) {
     DocSearch.checkArguments({
       apiKey,
