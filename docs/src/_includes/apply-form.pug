@@ -1,23 +1,36 @@
-form.custom-apply-form.m-auto.max-w-sm.elevation.p-2.md_p-3(method="POST", action="https://www.algolia.com/docsearch/join")
+form.custom-apply-form.m-auto.max-w-sm.elevation.p-2.md_p-3(method="POST", action="https://docsearch-hub.herokuapp.com/form/inbound")
   .custom-form-content.form-content
-    .mb-2
-      label.control-label(for="url") Documentation URL
-      input#url.form-control(name="url", placeholder="https://project.org/docs", type="url", required)  
-      p.text-grey-dark.text--1.leading-2.my-1.italic We'll crawl pages at this address and index the content on Algolia.
+    .mb-2.form-step(name="step-documentationUrl")
+      label.control-label(for="documentationUrl") Documentation URL
+      input#url.form-control(name="documentationUrl", placeholder="https://project.org/docs", type="url", required)  
+      p.form-hint.text-grey-1.text--1.leading-2.my-1.italic We'll crawl pages at this address and index the content on Algolia.
+      p.form-error.text-mars-2.text--1.my-1.bold Error
 
-    .mb-2
+    .mb-2.form-step(name="step-githubUrl")
+      label.control-label(for="githubUrl") 
+        |Repository url
+        .inline.text--1.text-grey-1  (optional)
+      input#url.form-control(name="githubUrl", placeholder="https://github.com/username/project", type="url", required)  
+      p.form-hint.text-grey-1.text--1.leading-2.my-1.italic This is optional, but we'll give higher priority to open source requests
+      p.form-error.text-mars-2.text--1.my-1.bold Error
+
+    .mb-2.form-step(name="step-email")
       label.control-label(for="email") Email
       input#email.form-control(name="email", placeholder="you@project.org", type="email", required)
-      p.text-grey-dark.text--1.leading-2.my-1.italic We'll send you the JavaScript snippet you'll have to integrate into your documentation.
-    .mb-2
+      p.form-hint.text-grey-1.text--1.leading-2.my-1.italic We'll send you the JavaScript snippet you'll have to integrate into your documentation.
+      p.form-error.text-mars-2.text--1.my-1.bold Error
+
+    .mb-2.form-step(name="step-algoliaPolicy")
       label.cursor-pointer
-        input(name="owner", type="checkbox", required)
+        input(name="algoliaPolicy", type="checkbox", required)
         span
           |  I'm the 
           .bold.inline owner
           |  of the website and I 
           a(href="./who-can-apply.html") read the checklist
         |  before applying.
+      p.form-error.text-mars-2.text--1.bold.my-1 Error
+
     .mb-2
     button.c-button.c-button-primary.w-100(type="submit") Apply to DocSearch
     p.leading-2.text-1.my-1 Refer to 
