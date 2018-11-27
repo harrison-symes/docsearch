@@ -206,6 +206,7 @@
 }
 
 /* Forms */
+/* purgecss start ignore */
 .form-step {
   .form-hint { display: block; }
   .form-error { display: none; }
@@ -215,6 +216,7 @@
   .form-error { display: block; }
   .form-control { border-color: #ed5a6a; }
 }
+/* purgecss end ignore */
 
 .control-label {
   display: inline-block;
