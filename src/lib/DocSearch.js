@@ -46,7 +46,7 @@ class DocSearch {
     handleSelected = false,
     enhancedSearchInput = false,
     layout = 'collumns',
-    dataCallback = () => {},
+    dataCallback = null,
   }) {
     DocSearch.checkArguments({
       apiKey,
@@ -105,19 +105,19 @@ class DocSearch {
       },
     ]);
 
-    // If user defined its own handleSelected, we prevent clicks on suggestions
-    // link to do anything
-    if (handleSelected) {
+    const customHandleSelected = handleSelected;
+    this.handleSelected = customHandleSelected || this.handleSelected;
+
+    // We prevent default link clicking if a custom handleSelected is defined
+    if (customHandleSelected) {
       $('.algolia-autocomplete').on('click', '.ds-suggestions a', event => {
         event.preventDefault();
       });
     }
 
-    // Click on suggestions will follow the link, but keyboard navigation still
-    // need the handleSelected
     this.autocomplete.on(
       'autocomplete:selected',
-      handleSelected.bind(null, this.autocomplete.autocomplete)
+      this.handleSelected.bind(null, this.autocomplete.autocomplete)
     );
 
     this.autocomplete.on(
@@ -224,7 +224,9 @@ class DocSearch {
           },
         ])
         .then(data => {
-          this.dataCallback(data)
+          if (this.dataCallback) {
+            this.dataCallback(data)
+          }
           let hits = data.results[0].hits;
           if (transformData) {
             hits = transformData(hits) || hits;
@@ -333,7 +335,14 @@ class DocSearch {
     return suggestion => template.render(suggestion);
   }
 
-  handleSelected(input, event, suggestion) {
+  handleSelected(input, event, suggestion, datasetNumber, context = {}) {
+    // Do nothing if click on the suggestion, as it's already a <a href>, the
+    // browser will take care of it. This allow Ctrl-Clicking on results and not
+    // having the main window being redirected as well
+    if (context.selectionMethod === 'click') {
+      return;
+    }
+
     input.setVal('');
     window.location.assign(suggestion.url);
   }
