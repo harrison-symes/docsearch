@@ -13,6 +13,40 @@ docsearch({
 
   applyForm.onsubmit = submitForm;
 
+  // Called when submitting the form
+  function submitForm(event) {
+    event.preventDefault();
+    grecaptcha.execute();
+  }
+
+  // Called when recaptcha thinks you're a human.
+  // Note: for testing purpose, opening the page in incognito and running
+  // document.querySelectorAll('#apply button')[0].click() seems to trigger
+  // a failed recaptcha.
+  function recaptchaCallback(token) {
+    const url = applyForm.getAttribute('action');
+    const payload = {
+      recaptchaToken: token,
+      documentationUrl: getValue('documentationUrl'),
+      githubUrl: getValue('githubUrl'),
+      email: getValue('email'),
+      algoliaPolicy: getValue('algoliaPolicy'),
+    };
+
+    postJSON(url, payload, onHubResponse);
+    grecaptcha.reset();
+  }
+  window.recaptchaCallback = recaptchaCallback;
+
+  // Called with the response from the hub
+  function onHubResponse(response) {
+    const data = JSON.parse(response);
+    if (data.success) {
+      return displaySuccess();
+    }
+    return displayErrors(data.errors);
+  }
+
   // Return the value of a given input
   function getValue(inputName) {
     const input = applyForm.querySelector(`input[name=${inputName}]`);
@@ -33,17 +67,7 @@ docsearch({
     request.send(JSON.stringify(data));
   }
 
-  // Called with the response from the hub
-  function onHubResponse(response) {
-    // If it's JSON it's an error
-    if (response[0] === '[') {
-      const errors = JSON.parse(response);
-      displayErrors(errors);
-      return;
-    }
-    displaySuccess();
-  }
-
+  // Clear all errors of the form
   function clearAllErrors() {
     const inputSteps = applyForm.querySelectorAll('.form-step');
     inputSteps.forEach(inputStep => {
@@ -51,7 +75,13 @@ docsearch({
     });
   }
 
+  // Display errors returned from the hub
   function displayErrors(errors) {
+    if (errors === 'recaptcha') {
+      displayRecaptchaFallback();
+      return;
+    }
+
     clearAllErrors();
     errors.forEach(error => {
       const inputName = error.param;
@@ -63,6 +93,7 @@ docsearch({
     });
   }
 
+  // Display success message
   function displaySuccess() {
     const formThankYou = document.querySelector('.custom-form-thank-you');
     const formContent = document.querySelector('.custom-form-content');
@@ -81,17 +112,14 @@ docsearch({
     formThankYou.classList.toggle('hidden');
   }
 
-  function submitForm(event) {
-    event.preventDefault();
+  // Display the error fallback when recaptcha is failing
+  function displayRecaptchaFallback() {
+    const formContent = document.querySelector('.custom-form-content');
+    const recaptchaFallback = document.querySelector(
+      '.custom-form-recaptcha-fallback'
+    );
 
-    const url = applyForm.getAttribute('action');
-    const payload = {
-      documentationUrl: getValue('documentationUrl'),
-      githubUrl: getValue('githubUrl'),
-      email: getValue('email'),
-      algoliaPolicy: getValue('algoliaPolicy'),
-    };
-
-    postJSON(url, payload, onHubResponse);
+    formContent.classList.toggle('hidden');
+    recaptchaFallback.classList.toggle('hidden');
   }
 })();
