@@ -559,10 +559,10 @@ atob@^2.1.1:
   resolved "https://registry.yarnpkg.com/atob/-/atob-2.1.1.tgz#ae2d5a729477f289d60dd7f96a6314a22dd6c22a"
   integrity sha1-ri1acpR38onWDdf5amMUoi3Wwio=
 
-autocomplete.js@0.33.0:
-  version "0.33.0"
-  resolved "https://registry.yarnpkg.com/autocomplete.js/-/autocomplete.js-0.33.0.tgz#33d460367e2e7b6c2fe424353d955e022fe4594c"
-  integrity sha512-J0F7BkPhYwXvfs8Skp6v2e2IHYv0SL8INyHYwb7nUpvKHr96g6zS8RNEFGEfEuO3ND+XUsesEMM59LlwQoLfoA==
+autocomplete.js@0.34.0:
+  version "0.34.0"
+  resolved "https://registry.yarnpkg.com/autocomplete.js/-/autocomplete.js-0.34.0.tgz#d2a366a4ccd81acc946d62a5b483cb9fa61784f2"
+  integrity sha512-0MB7CmBW7WVw5YSKE5/f58ULtUL3wJ9mB4D3zhSaXoyLg6yMJmM88q9wBUhwmyfUptXn6wlTpwAmXHVjiEh0Tw==
   dependencies:
     immediate "^3.2.3"
 
