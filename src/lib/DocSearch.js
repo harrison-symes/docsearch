@@ -36,6 +36,7 @@ class DocSearch {
     appId = 'BH4D9OD16A',
     debug = false,
     algoliaOptions = {},
+    queryDataCallback = null,
     autocompleteOptions = {
       debug: false,
       hint: false,
@@ -46,7 +47,6 @@ class DocSearch {
     handleSelected = false,
     enhancedSearchInput = false,
     layout = 'collumns',
-    dataCallback = null,
   }) {
     DocSearch.checkArguments({
       apiKey,
@@ -54,13 +54,13 @@ class DocSearch {
       inputSelector,
       debug,
       algoliaOptions,
+      queryDataCallback,
       autocompleteOptions,
       transformData,
       queryHook,
       handleSelected,
       enhancedSearchInput,
       layout,
-      dataCallback,
 
     });
 
@@ -69,6 +69,7 @@ class DocSearch {
     this.indexName = indexName;
     this.input = DocSearch.getInputFromSelector(inputSelector);
     this.algoliaOptions = { hitsPerPage: 5, ...algoliaOptions };
+    this.queryDataCallback = queryDataCallback || null;
     const autocompleteOptionsDebug =
       autocompleteOptions && autocompleteOptions.debug
         ? autocompleteOptions.debug
@@ -83,7 +84,6 @@ class DocSearch {
 
     // eslint-disable-next-line no-param-reassign
     handleSelected = handleSelected || this.handleSelected;
-    this.dataCallback = dataCallback || null;
 
     this.isSimpleLayout = layout === 'simple';
 
@@ -224,8 +224,8 @@ class DocSearch {
           },
         ])
         .then(data => {
-          if (this.dataCallback) {
-            this.dataCallback(data)
+          if (this.queryDataCallback && typeof this.queryDataCallback == "function") {
+            this.queryDataCallback(data)
           }
           let hits = data.results[0].hits;
           if (transformData) {

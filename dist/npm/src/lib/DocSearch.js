@@ -66,6 +66,8 @@ var DocSearch = function () {
         debug = _ref$debug === undefined ? false : _ref$debug,
         _ref$algoliaOptions = _ref.algoliaOptions,
         algoliaOptions = _ref$algoliaOptions === undefined ? {} : _ref$algoliaOptions,
+        _ref$queryDataCallbac = _ref.queryDataCallback,
+        queryDataCallback = _ref$queryDataCallbac === undefined ? null : _ref$queryDataCallbac,
         _ref$autocompleteOpti = _ref.autocompleteOptions,
         autocompleteOptions = _ref$autocompleteOpti === undefined ? {
       debug: false,
@@ -81,9 +83,7 @@ var DocSearch = function () {
         _ref$enhancedSearchIn = _ref.enhancedSearchInput,
         enhancedSearchInput = _ref$enhancedSearchIn === undefined ? false : _ref$enhancedSearchIn,
         _ref$layout = _ref.layout,
-        layout = _ref$layout === undefined ? 'collumns' : _ref$layout,
-        _ref$dataCallback = _ref.dataCallback,
-        dataCallback = _ref$dataCallback === undefined ? function () {} : _ref$dataCallback;
+        layout = _ref$layout === undefined ? 'collumns' : _ref$layout;
 
     _classCallCheck(this, DocSearch);
 
@@ -93,13 +93,13 @@ var DocSearch = function () {
       inputSelector: inputSelector,
       debug: debug,
       algoliaOptions: algoliaOptions,
+      queryDataCallback: queryDataCallback,
       autocompleteOptions: autocompleteOptions,
       transformData: transformData,
       queryHook: queryHook,
       handleSelected: handleSelected,
       enhancedSearchInput: enhancedSearchInput,
-      layout: layout,
-      dataCallback: dataCallback
+      layout: layout
 
     });
 
@@ -108,6 +108,7 @@ var DocSearch = function () {
     this.indexName = indexName;
     this.input = DocSearch.getInputFromSelector(inputSelector);
     this.algoliaOptions = _extends({ hitsPerPage: 5 }, algoliaOptions);
+    this.queryDataCallback = queryDataCallback || null;
     var autocompleteOptionsDebug = autocompleteOptions && autocompleteOptions.debug ? autocompleteOptions.debug : false;
     // eslint-disable-next-line no-param-reassign
     autocompleteOptions.debug = debug || autocompleteOptionsDebug;
@@ -117,7 +118,6 @@ var DocSearch = function () {
 
     // eslint-disable-next-line no-param-reassign
     handleSelected = handleSelected || this.handleSelected;
-    this.dataCallback = dataCallback || null;
 
     this.isSimpleLayout = layout === 'simple';
 
@@ -137,17 +137,17 @@ var DocSearch = function () {
       }
     }]);
 
-    // If user defined its own handleSelected, we prevent clicks on suggestions
-    // link to do anything
-    if (handleSelected) {
+    var customHandleSelected = handleSelected;
+    this.handleSelected = customHandleSelected || this.handleSelected;
+
+    // We prevent default link clicking if a custom handleSelected is defined
+    if (customHandleSelected) {
       (0, _zepto2.default)('.algolia-autocomplete').on('click', '.ds-suggestions a', function (event) {
         event.preventDefault();
       });
     }
 
-    // Click on suggestions will follow the link, but keyboard navigation still
-    // need the handleSelected
-    this.autocomplete.on('autocomplete:selected', handleSelected.bind(null, this.autocomplete.autocomplete));
+    this.autocomplete.on('autocomplete:selected', this.handleSelected.bind(null, this.autocomplete.autocomplete));
 
     this.autocomplete.on('autocomplete:shown', this.handleShown.bind(null, this.input));
 
@@ -194,7 +194,9 @@ var DocSearch = function () {
             clickAnalytics: true
           })
         }]).then(function (data) {
-          _this.dataCallback(data);
+          if (_this.queryDataCallback && typeof _this.queryDataCallback == "function") {
+            _this.queryDataCallback(data);
+          }
           var hits = data.results[0].hits;
           if (transformData) {
             hits = transformData(hits) || hits;
@@ -209,7 +211,16 @@ var DocSearch = function () {
 
   }, {
     key: 'handleSelected',
-    value: function handleSelected(input, event, suggestion) {
+    value: function handleSelected(input, event, suggestion, datasetNumber) {
+      var context = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : {};
+
+      // Do nothing if click on the suggestion, as it's already a <a href>, the
+      // browser will take care of it. This allow Ctrl-Clicking on results and not
+      // having the main window being redirected as well
+      if (context.selectionMethod === 'click') {
+        return;
+      }
+
       input.setVal('');
       window.location.assign(suggestion.url);
     }
